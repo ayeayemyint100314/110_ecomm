@@ -1,6 +1,14 @@
 <?php 
 
+if(isset($_POST['login'])) // $_POST is super global array
+{
+   $email = $_POST['email'];// retrieve email value of user
+   $password = $_POST['password']; // retrieve password of user
 
+   //echo "email is $email and password you typed is $password";
+   
+
+}
 
 
 
@@ -32,14 +40,13 @@
             <div class="mb-3">
                 <label for="" class="form-label">Email</label>
                 <input type="email" class="form-control" name="email">
-
             </div>
+
             <div class="mb-3">
                 <label for="">Password</label>
                 <input type="password" class="form-control" name="password">
             </div>
             <button type="submit" class="btn btn-outline-primary" name="login">Login
-
             </button>
         </form>
         </div>
