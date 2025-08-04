@@ -1,5 +1,9 @@
 <?php
 require_once "dbconnect.php";
+if(!isset($_SESSION))
+{ // session will be opened when it does not exist.
+    session_start();
+}
 
 
 try {
@@ -36,6 +40,7 @@ if(isset($_POST['insertBtn']))
             $id = $conn->lastInsertId();
             if ($flag)
             {   $message = "new product with id $id has been inserted successfully!";
+                $_SESSION['message'] = $message;
                 header("Location:viewProduct.php");
             }
 
