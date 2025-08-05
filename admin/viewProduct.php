@@ -3,6 +3,23 @@ if(!isset($_SESSION))
 {
     session_start();
 }
+require_once "dbconnect.php"; 
+try{
+        $sql = "SELECT  p.productID, p.productName, 
+		p.price, p.description, p.qty,
+        p.imgPath, c.catName as category
+        from products p, category c 
+        where p.category = c.catID";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $products = $stmt->fetchAll(); // just naming variable for multiple products
+        
+
+
+}catch(PDOException $e)
+{
+    echo $e->getMessage();
+}
 
 
 
@@ -26,17 +43,55 @@ if(!isset($_SESSION))
         </div>
 
         <div class="row"><!-- content   -->
-            <div class="col-md-3">
-                filters are here
-
+            <div class="col-md-2 py-5 px-5">
+                <a href="insertProduct2.php" class="btn btn-outline-primary">New Product</a>
             </div>
-            <div class="col-md-9"><!-- table view   -->
+
+            <div class="col-md-10 py-5"><!-- table view   -->
                 <?php 
                 if(isset($_SESSION['message']))
                 {   
-                    echo "<p class='alert alert-success'>$_SESSION[message] </p>";
+                    echo "<p class='alert alert-success' style=width:500px>$_SESSION[message] </p>";
+                    unset($_SESSION['message']);
                 } 
                  ?>
+                 <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <td>Name</td>
+                            <td>Category</td>
+                            <td>Price</td>
+                            <td>Quantity</td>
+                            <td>Description</td>
+                            <td>Image</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php 
+                    
+                    foreach($products as $product)
+                    {   $desc = substr($product['description'], 0, 30 );
+                        echo  "<tr>
+                        <td>$product[productName]</td>
+                        <td>$product[category]</td>
+                        <td>$product[price]</td>
+                        <td>$product[qty]</td>
+                        <td class='text-wrap'>$desc</td>
+                        <td><img src=$product[imgPath] style=width:100px;height:100px> </td> 
+                        <td><a href=insert.php class='btn btn-primary rounded pill'>Edit </a></td>
+                        <td><a href=delete.php  class='btn btn-danger rounded pill'>Delete </a></td>
+                        </tr>";
+                    
+                    }
+                    
+                    
+                    ?>
+                    </tbody>
+                 </table>
+
+
+
+
 
             </div>
         </div>
