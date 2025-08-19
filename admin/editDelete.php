@@ -48,19 +48,20 @@ if (isset($_GET['eid'])) { // true when edit button is clicked
     }
 }
 else if(isset($_POST['updateBtn'])) // checking update button is clicked 
-{     $productName =  $_POST['pname'];
-      $category = $_POST['category'];
-      $price = $_POST['price'];
+{     $productName =  $_POST['pname'];// form element named pname
+      $category = $_POST['category']; // form element category select box
+      $price = $_POST['price']; // form element name price
       $description = $_POST['description'];
       $qty = $_POST['qty'];
-      $fileImg = $_FILES['file'];
+      $fileImg = $_FILES['file'];  // size, type, name , tmp_name
       
-
+        // specify directory or folder to store product image
       $filePath = "productImage/$fileImg[name]";
     $status = move_uploaded_file($fileImg['tmp_name'], $filePath);
     if($status == true) // $status
     {
-        try{ $pid = $_POST['pid'];
+        try{ $pid = $_POST['pid'];// 
+            // DML data Manipulate language, update, delete, insert
             $sql = "update products set productName=?, category=?, 
                      price=?, qty=?, description=?, imgPath=?
                      where productID=? ";
@@ -68,7 +69,7 @@ else if(isset($_POST['updateBtn'])) // checking update button is clicked
             $status = $stmt->execute([$productName, $category, $price,
                                  $qty, $description, $filePath, $pid ]);
             if($status)
-            {
+            {   $_SESSION['updateMessage'] = "Product with product id $pid is updated!!!";
                 header("Location:viewProduct.php");
             }
 
