@@ -119,7 +119,7 @@ else if(isset($_POST['radioBtn'])) // for radio search
         </div>
 
         <div class="row"><!-- content   -->
-            <div class="col-md-2 py-5 px-5">
+            <div class="col-md-3 py-5 px-5">
                 <div class="card mb-3">
                     <a href="insertProduct2.php" class="btn btn-outline-primary card-link">New Product</a>
                 </div>
@@ -162,7 +162,7 @@ else if(isset($_POST['radioBtn'])) // for radio search
                 </div>
             </div>
 
-            <div class="col-md-10 py-5"><!-- table view   -->
+            <div class="col-md-9 py-5"><!-- table view   -->
                 <?php
                 if (isset($_SESSION['message'])) {
                     echo "<p class='alert alert-success' style=width:500px>$_SESSION[message] </p>";

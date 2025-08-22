@@ -6,7 +6,7 @@ if(!isset($_SESSION))
 require_once "dbconnect.php";
 if (isset($_POST['login'])) // $_POST is super global array
 {
-    $email = $_POST['email']; // retrieve email value of user
+    $email = htmlspecialchars($_POST['email']); // retrieve email value of user
     $password = $_POST['password']; // retrieve password of user
 
     $sql = "select * from admin where email=?";
@@ -19,8 +19,7 @@ if (isset($_POST['login'])) // $_POST is super global array
         if (password_verify($password, $adminInfo['password'])) {
             $_SESSION['loginSuccess']= true;
             $_SESSION['email'] = $email;
-            
-
+            header("Location:viewProduct.php");
             
         } else { // password and hash doesn't match.
             $errorMessage = "Email or password might be incorrect!!";
