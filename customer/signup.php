@@ -4,35 +4,32 @@ if (!isset($_SESSION)) {
 }
 require_once "../admin/dbconnect.php";
 // creating password strength checker function
-function isStrongPassword($password) {
+function isStrongPassword($password)
+{
     $digitCount = 0; // isdigit()
     $specCount = 0; //preg_match('/[^a-zA-Z0-9]/', $str) > 0;
     $capitalCount = 0; //ctype_upper
 
-    foreach(str_split($password) as $letter)
-    {  if(ctype_digit($letter)) // checks whether character is digit or not
-        {  $digitCount++;
+    foreach (str_split($password) as $letter) {
+        if (ctype_digit($letter)) // checks whether character is digit or not
+        {
+            $digitCount++;
+        } else if (preg_match('/[^a-zA-Z0-9]/', $letter)) {
+            $specCount++;
+        } else if (ctype_upper($letter)) {
+            $capitalCount++;
         }
-        else if(preg_match('/[^a-zA-Z0-9]/', $letter))
-        {  $specCount ++;
-        }
-        else if(ctype_upper($letter))
-        {    $capitalCount++;
-        }
-    }// end for loop
-    if($digitCount>=1 && $specCount >=1 && $capitalCount>=1)
-    {  return true;
-    }
-    else{
+    } // end for loop
+    if ($digitCount >= 1 && $specCount >= 1 && $capitalCount >= 1) {
+        return true;
+    } else {
         return false;
     }
-
-
-
 }
 // checking password 
-function isLengthOK($password) {
-    return strlen($password)>=8; // true on pwd length greater than or equal to 8
+function isLengthOK($password)
+{
+    return strlen($password) >= 8; // true on pwd length greater than or equal to 8
 
 }
 
@@ -51,26 +48,45 @@ if (
     $gender = $_POST['gender'];
     $city = $_POST['city'];
     $profile = $_FILES['profile'];
+    $profilePath = "profiles/" . $profile['name'];
 
     if ($password != $cpassword) {
         $errMessage = "Password and Confirm Password must be the same!";
-        echo "$errMessage";
-    } 
-    else {
+    } else {
         if (isLengthOK($password)) {
-            if(isStrongPassword($password))
-            {
-                    echo "your password is strong";
-            }
-            else {
-                $errMessage = "Password is not strong";
-                echo "$errMessage";
-            }
+            if (isStrongPassword($password)) { // desired task and continue coding for saving file and inserting user info
+                if (move_uploaded_file($profile['tmp_name'], $profilePath)) { 
+                    // userId,	email,	password,profilePath,city,gender,fullname,	bdate	
+                   
+                    $hashcode = password_hash($password, PASSWORD_BCRYPT);
+                    try{
+                        $sql = "insert into users values
+                            (?, ?, ?, ?, ?, ?, ?, ?)";
+                        $stmt = $conn->prepare($sql);
+                        $status = $stmt->execute([null,$email, $hashcode, $profilePath,
+                         $city,$gender,$fullname, $bdate   ]);
+                         if ($status)
+                         {
+                                header("Location:signin.php");
 
+                         }
+
+
+
+
+
+                    }catch(PDOException $e)
+                    {
+                            echo $e->getMessage();
+                    }
+
+                }
+            } else {
+                $errMessage = "Password is not strong";
+            }
         } // end isLengthOK
         else {
             $errMessage = "Password must be at least 8 characters long.";
-            echo "$errMessage";
         }
     }
 }
@@ -115,6 +131,13 @@ if (
                                     required>
                             </div>
                             <div class="mb-3">
+                                <?php 
+                                if(isset($errMessage))
+                                {
+                                echo "<p class='alert alert-danger'> $errMessage</p>";
+                                
+                                }
+                                ?>
                                 <label for="password" class="form-label">Password</label>
                                 <input type="password" class="form-control" name="password" id="password"
                                     required>
@@ -133,12 +156,12 @@ if (
                             </div>
                             <p>Choose Gender</p>
                             <div class="form-check mb-1">
-                                <input type="radio" class="form-check-input" name="gender" id="gender">
-                                <label for="gender" class="form-check-label" value="male">Male</label>
+                                <input type="radio" class="form-check-input" value="male" name="gender" id="gender">
+                                <label for="gender" class="form-check-label" >Male</label>
                             </div>
                             <div class="form-check mb-3">
-                                <input type="radio" class="form-check-input" name="gender" id="gender">
-                                <label for="gender" class="form-check-label" value="female">Female</label>
+                                <input type="radio" class="form-check-input" value="female" name="gender" id="gender">
+                                <label for="gender" class="form-check-label" >Female</label>
                             </div>
                             <div class="mb-3">
                                 <label for="city" class="form-label">Choose City</label>
