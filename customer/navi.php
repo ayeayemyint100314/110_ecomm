@@ -1,3 +1,10 @@
+<?php 
+if(!isset($_SESSION))
+{
+  session_start();
+}
+
+?>
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">Navbar</a>
@@ -9,15 +16,21 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="#">Home</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Features</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Pricing</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" >Disabled</a>
-        </li>
+      <?php   if(isset($_SESSION['email'])) {              ?>
+             <li class="nav-item">
+              <a class="nav-link" href="customerView.php">All Products</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="#"><?php echo $_SESSION['email']; ?></a>
+            </li>
+            <li class="nav-item">
+              <img src=<?php  echo $_SESSION['profilePath']; ?> style="width:50px; height:50px">
+            </li>
+            <li class="nav-item">
+              <a class="nav-link btn btn-outline-primary" href="userLogout.php">Logout</a>
+            </li>
+        <?php   }     ?>
       </ul>
     </div>
   </div>

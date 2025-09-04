@@ -23,8 +23,6 @@ try {
     $stmt->execute();
     $products = $stmt->fetchAll(); // just naming variable for multiple products
 
-
-
 } catch (PDOException $e) {
     echo $e->getMessage();
 }
@@ -155,10 +153,6 @@ else if(isset($_POST['radioBtn'])) // for radio search
                             <button name="radioBtn" class="btn btn-outline-primary rounded-pill">Search</button>
                         </div>
                     </form>
-
-
-
-
                 </div>
             </div>
 

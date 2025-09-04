@@ -1,3 +1,54 @@
+<?php 
+if(!isset($_SESSION))
+{
+    session_start();
+}
+require_once "../admin/dbconnect.php";
+if($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['ulogin']))
+{
+        $password = $_POST['password'];
+        $email = $_POST['email'];
+        try{
+            $sql = "select * from users where email=?";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([$email]);
+            $userInfo = $stmt->fetch(); // user record
+            if($userInfo) // if email exists
+            { // need to  verify password is correct
+                    if(password_verify($password, $userInfo['password'] )) // password is correct
+                    {   $_SESSION['email'] = $userInfo['email'];
+                        $_SESSION['profilePath'] = $userInfo['profilePath'];
+                        
+                        $_SESSION['loginSuccess'] = "login success!!";
+                        header("Location:customerView.php");
+                        
+                    }
+                    else{ // incorrect password
+                        $errMessage = "password incorrect";
+                    }
+            }// end of userinfo
+            else{ // if email does not exist
+                $errMessage = "email does not exist.";
+                
+            }
+
+        }catch(PDOException $e)
+        {
+            echo $e->getMessage();
+        }
+
+        
+
+
+
+}
+
+
+
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,7 +73,7 @@
 
         <div class="row">
             <div class="col-md-4 mx-auto py-5">
-                <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="form bg-light border border-1">
+                <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="form card shadow-lg h-100">
                     <?php 
                     if(isset($errorMessage))
                     {
@@ -30,6 +81,7 @@
                     }
                     
                     ?>
+                    <div><h3>Login</h3></div>
                     <div class="mb-3">
                         <label for="" class="form-label">Email</label>
                         <input type="email" class="form-control" name="email">
@@ -39,8 +91,10 @@
                         <label for="">Password</label>
                         <input type="password" class="form-control" name="password">
                     </div>
-                    <button type="submit" class="btn btn-outline-primary" name="login">Login
+                    <div class="d-grid">
+                    <button type="submit" class="btn btn-outline-primary" name="ulogin">Login
                     </button>
+                    </div>
                 </form>
             </div>
 
